@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+	<%- include("includes/head") %> <%- include("includes/nav") %>
+	<body>
+		<form action="login" method="POST" class="center">
+			<input type="text" placeholder="Username" name="username" autocomplete="username" required autofocus /><br />
+			<input type="password" placeholder="Password" name="password" autocomplete="current-password" required /><br />
+			<input type="text" value="<% if (locals.query) { %><%= query.forward %><% } %>" name="forward" hidden />
+			<input type="submit" />
+		</form>
+	</body>
+</html>

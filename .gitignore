@@ -1,0 +1,4 @@
+node_modules/
+public/img/bg
+config.js
+package-lock.json

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+	<%- include("includes/head") %> <%- include("includes/nav") %>
+	<body>
+		<table border="1">
+			<tr>
+				<th>#</th>
+				<th>Name</th>
+			</tr>
+			<% results.forEach(user => { %>
+			<tr id="<%= user.userID %>">
+				<td><%= user.userID %></td>
+				<td><a href="<%= user.userID %>"><%= user.username %></a></td>
+			</tr>
+			<% }); %>
+		</table>
+
+		<%- include("includes/footer") %>
+	</body>
+</html>
