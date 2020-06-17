@@ -1,1 +1,1 @@
-Dazonia Imageboard rewritten in Node.js
+Dazonia Imageboard rewritten in Node.js and React
