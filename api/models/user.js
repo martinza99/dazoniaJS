@@ -22,7 +22,7 @@ class User {
 			const sql = `SELECT * FROM user WHERE ${collumn} = ?`;
 			con.execute(sql, [value], function(err, results, fields) {
 				if (err) throw err;
-				if (results.lenght == 0) reject(`No users found with ${collumn} = ${id}`);
+				if (results.length == 0) reject(`No user found with ${collumn} = ${value}`);
 				resolve(new User(results[0]));
 			});
 		});
