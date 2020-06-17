@@ -33,7 +33,8 @@ app.listen(config.port, ()=>{
 function authCheck(req, res, next){
 	if(!req.user)
 		res.redirect("/auth/login?fail");
-	next();
+	else
+		next();
 }
 
 module.exports = app;
