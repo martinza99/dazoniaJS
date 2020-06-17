@@ -3,11 +3,15 @@ const config = require("../config/config.js");
 const passport = require("passport");
 const router = express.Router();
 
-router.post("/", passport.authenticate("local",
+router.post("/login", passport.authenticate("local",
 	{
-		failureRedirect: "/login.html?status=failure",
-		successRedirect: "/?status=success"
+		successRedirect: "/"
 	}
 ));
+
+router.post("/logout", (req, res)=>{
+	req.logout();
+	res.redirect("/auth/login");
+});
 
 module.exports = router;

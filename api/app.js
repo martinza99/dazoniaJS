@@ -1,14 +1,14 @@
-const config = require("./config/config.js");
+const config = require("./config/config");
 const express = require("express");
 const cookieSession = require("cookie-session");
+const bodyParser = require("body-parser");
 
 const passport = require("passport");
-const passportSetup = require("./config/LocalStrat.js");
+const passportSetup = require("./config/LocalStrat");
 const apiRouter = require("./routes/api");
+const authRouter = require("./routes/auth");
 
 const app = express();
-app.set("view engine", "ejs");
-app.set("views", "views");
 
 app.use(cookieSession({
 	maxAge: 24 * 60 * 60 * 1000,
@@ -17,20 +17,23 @@ app.use(cookieSession({
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(require("body-parser").urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.use("/files|/thumbnails", express.static("../../dazonia/thumbnails"));
-app.use("/api", apiRouter);
-app.use(express.static("../client/build"));
-
-app.use(function(req, res, next) {
-	res.statusCode = 404;
-	res.statusMessage = "Not Found";
-	res.render("404", { title: "404 - Not Found", path: req.path, query: req.query });
-});
+app.use("/api", authCheck, apiRouter);
+app.use("/auth", authRouter);
+app.use("/", express.static("./test"));
+// app.use(express.static("../client/build"));
 
 app.listen(config.port, ()=>{
 	console.log(`Running on port ${config.port}`);
 });
+
+function authCheck(req, res, next){
+	if(!req.user)
+		res.redirect("/auth/login?fail");
+	next();
+}
 
 module.exports = app;
