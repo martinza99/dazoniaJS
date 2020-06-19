@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>API Test Forms</title>
+	<link rel="stylesheet" href="test.css" />
+</head>
+
+<body>
+	<select>
+		<optgroup label="list">
+			<option value="list" selected>File list</option>
+		</optgroup>
+		<optgroup label="files">
+			<option value="files">File Data</option>
+			<option value="filesDelete">File Delete</option>
+			<option value="filesTitle">File Title</option>
+		</optgroup>
+		<optgroup label="Upload">
+			<option value="upload">Upload File</option>
+		</optgroup>
+		<optgroup label="auth">
+			<option value="authLogin">Login</option>
+			<option value="authLogout">Logout</option>
+		</optgroup>
+	</select>
+
+	<form method="dialog" autocomplete="off" enctype="">
+		<fieldset>
+		</fieldset>
+		<input type="reset" value="clear">
+		<input type="submit" />
+	</form>
+
+	<pre id="output"></pre>
+	<script src="endpoints.js"></script>
+	<script src="test.js"></script>
+</body>
+
+</html>
