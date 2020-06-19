@@ -20,20 +20,22 @@ class User {
 	static getUser(collumn, value) {
 		return new Promise((resolve, reject) => {
 			const sql = `SELECT * FROM user WHERE ${collumn} = ?`;
-			con.execute(sql, [value], function(err, results, fields) {
+			con.execute(sql, [value], function (err, results, fields) {
 				if (err) throw err;
-				if (results.length == 0) reject(`No user found with ${collumn} = ${value}`);
+				if (results.length == 0) resolve(null);
 				resolve(new User(results[0]));
 			});
 		});
 	}
 
 	/**
-	 * @param {Number} id 
+	 * @param {Number} id
 	 * @returns {User}
 	 */
 	static getByIdSync(id) {
-		this.getUser("userID", id).then((user => {return user}));
+		this.getUser("userID", id).then((user) => {
+			return user;
+		});
 	}
 
 	static getById(id) {

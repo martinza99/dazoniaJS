@@ -22,7 +22,7 @@ class File {
 			const sql = `SELECT * FROM file WHERE ${collumn} = ?`;
 			con.execute(sql, [value], function (err, results, fields) {
 				if (err) throw err;
-				if (results.length == 0) reject(`No file found with ${collumn} = ${value}`);
+				if (results.length == 0) resolve(null);
 				resolve(new File(results[0]));
 			});
 		});
@@ -35,11 +35,15 @@ class File {
 	static getByName(filename) {
 		return this.getFile("filename", filename);
 	}
+
+	static getByHash(hash) {
+		return this.getFile("hash", hash);
+	}
 }
 
 module.exports = File;
 
-/**@typedef {Object} 
+/**@typedef {Object}
  * @property {Number} fileID
  * @property {String} filename
  * @property {String} title

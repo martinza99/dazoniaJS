@@ -14,11 +14,9 @@ router.use("/users", userRouter);
 module.exports = router;
 
 async function checkFile(req, res, next) {
-	try {
-		const f = await file.getByName(req.params.id);
+	const f = await file.getByName(req.params.id);
+	if (f) {
 		req.file = f;
 		next();
-	} catch (error) {
-		res.status(404).json({ status: 404, message: "File not found" });
-	}
+	} else res.status(404).json({ status: 404, message: "File not found" });
 }
