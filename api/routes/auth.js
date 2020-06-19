@@ -4,7 +4,9 @@ const passport = require("passport");
 const router = express.Router();
 
 router.post("/login", passport.authenticate("local"), (req, res) => {
-	res.status(200).json(req.user);
+	const u = Object.assign({}, req.user);
+	u.password = undefined;
+	res.json(u);
 });
 
 router.post("/logout", (req, res) => {

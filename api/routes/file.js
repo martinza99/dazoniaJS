@@ -7,11 +7,11 @@ const ratingRouter = require("./rating");
 
 router.use("/ratings", ratingRouter);
 
-router.get(async (req, res) => {
+router.get("/", async (req, res) => {
 	res.json(req.file);
 });
 
-router.delete(checkOwner, async (req, res) => {
+router.delete("/", checkOwner, async (req, res) => {
 	const promises = [];
 	try {
 		promises.push(

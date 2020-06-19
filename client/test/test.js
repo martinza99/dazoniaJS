@@ -15,8 +15,7 @@ form.addEventListener("submit", async (event) => {
 	formData.delete("id");
 
 	if (options.body) {
-		if (1)
-			// if (options.headers["Content-Type"] == "multipart/form-data")
+		if (options.headers["Content-Type"] != "application/json")
 			options.body = formData;
 		else {
 			const data = {};
