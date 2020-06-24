@@ -1,7 +1,7 @@
 const endpoints = {
-	list: {
+	filesList: {
 		inputs: [],
-		url: "/api/list",
+		url: "/api/files",
 		options: {
 			method: "GET",
 		},

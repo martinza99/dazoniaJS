@@ -23,7 +23,6 @@ form.addEventListener("submit", async (event) => {
 			options.body = JSON.stringify(data);
 		}
 	}
-	console.log(options);
 	const res = await fetch(url, options);
 	if (res.type != "error") {
 		console.log(await res.json());
