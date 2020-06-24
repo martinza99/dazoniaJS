@@ -28,13 +28,54 @@ const endpoints = {
 			body: true,
 		},
 	},
-	upload: {
+	filesUpload: {
 		inputs: [{ name: "file", type: "file", multiple: true }],
-		url: "/api/upload/",
+		url: "/api/files/",
 		options: {
 			method: "POST",
 			headers: {},
 			body: true,
+		},
+	},
+	ratings: {
+		inputs: ["id"],
+		url: "/api/files/:id/ratings",
+		options: {
+			method: "GET",
+		},
+	},
+	ratingsPut: {
+		inputs: ["id", { name: "rating", type: "number" }],
+		url: "/api/files/:id/ratings",
+		options: {
+			method: "PUT",
+			body: true,
+		},
+	},
+	ratingsDelete: {
+		inputs: ["id"],
+		url: "/api/files/:id/ratings",
+		options: {
+			method: "DELETE",
+		},
+	},
+	users: {
+		url: "/api/users",
+		options: {
+			method: "GET",
+		},
+	},
+	usersGet: {
+		inputs: ["id"],
+		url: "/api/users/:id",
+		options: {
+			method: "GET",
+		},
+	},
+	usersMe: {
+		url: "/api/users/@me",
+		options: {
+			method: "GET",
 		},
 	},
 	authLogin: {

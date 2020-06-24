@@ -6,9 +6,9 @@ const uploadRouter = require("./upload");
 const listRouter = require("./list");
 const file = require("../models/file");
 
+router.use("/files", uploadRouter);
 router.use("/files/:id", checkFile, fileRouter);
 router.use("/list", listRouter);
-router.use("/upload", uploadRouter);
 router.use("/users", userRouter);
 
 module.exports = router;
