@@ -3,8 +3,7 @@ const router = express.Router();
 const con = require("../config/database");
 const dazFile = require("../models/file");
 const fs = require("fs");
-const crypto = require("crypto");
-const genThumbnail = require("simple-thumbnail");
+const { execSync } = require("child_process");
 
 router.post("/", async (req, res) => {
 	if (!req.files) {
@@ -18,7 +17,7 @@ router.post("/", async (req, res) => {
 				response.push({ message: "File already exists" });
 				continue;
 			}
-			let hash = crypto
+			let hash = require("crypto")
 				.createHash("md5")
 				.update(req.files.file.data, "binary")
 				.digest("base64")
@@ -27,28 +26,32 @@ router.post("/", async (req, res) => {
 
 			const ext = file.name.split(".").pop();
 			let name = "";
+			let fullname;
 			do {
 				name += hash.substring(1, 0);
 				hash = hash.substring(1);
+				fullname = `${name}.${ext}`;
 			} while (
 				await con
 					.promise()
-					.execute("SELECT * FROM file WHERE filename = ?", [
-						`${name}.${ext}`,
-					])[0]
+					.execute(
+						"SELECT * FROM file WHERE LOWER(filename) = LOWER(?)",
+						[fullname]
+					)[0]
 			);
 			con.promise().execute(
 				"INSERT INTO file (filename, title, hash, userID) VALUES (?,?,?,?)",
-				[`${name}.${ext}`, file.name, file.md5, req.user.userID]
+				[fullname, file.name, file.md5, req.user.userID]
 			);
 
-			const path = `../uploads/files/${name}.${ext}`;
-			file.mv(path);
-			// genThumbnail(path, `../uploads/thumbanils/${name}.${ext}`, "");
+			const path = `../uploads/files/${fullname}`;
+			await file.mv(path);
+
+			createThumbnail(180, fullname);
 
 			response.push({
 				fileID: undefined,
-				filename: `${name}.${ext}`,
+				filename: fullname,
 				title: file.name,
 				created: undefined,
 				hash: file.md5,
@@ -62,3 +65,19 @@ router.post("/", async (req, res) => {
 });
 
 module.exports = router;
+
+function createThumbnail(size, fullname) {
+	const { width, height } = JSON.parse(
+		execSync(
+			`ffprobe -v error -select_streams v:0 -show_entries stream=height,width -of json ../uploads/files/${fullname}`
+		)
+	).streams;
+
+	const sizeStr = width > height ? `${size}x?` : `?x${size}`;
+
+	require("simple-thumbnail")(
+		`../uploads/files/${fullname}`,
+		`../uploads/thumbnails/${fullname}`,
+		sizeStr
+	);
+}
