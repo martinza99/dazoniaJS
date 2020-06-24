@@ -23,10 +23,8 @@
 	"dependencies": {
 		"bcrypt": "^4.0.0",
 		"cookie-session": "^1.4.0",
-		"ejs": "^3.1.2",
 		"express": "^4.17.1",
 		"express-fileupload": "^1.1.7-alpha.3",
-		"ffmpeg-static": "^4.2.4",
 		"mysql2": "^2.1.0",
 		"passport": "^0.4.1",
 		"passport-local": "^1.0.0",
