@@ -11,15 +11,16 @@ router.post("/", async (req, res) => {
 		return;
 	}
 	const response = [];
+	if (!req.files.file.length) req.files.file = [req.files.file];
 	try {
-		for (const [key, file] of Object.entries(req.files)) {
+		for (const [key, file] of Object.entries(req.files.file)) {
 			if (await dazFile.getByHash(file.md5)) {
 				response.push({ message: "File already exists" });
 				continue;
 			}
 			let hash = require("crypto")
 				.createHash("md5")
-				.update(req.files.file.data, "binary")
+				.update(file.data, "binary")
 				.digest("base64")
 				.replace("+", "-")
 				.replace("/", "_");
@@ -32,20 +33,21 @@ router.post("/", async (req, res) => {
 				hash = hash.substring(1);
 				fullname = `${name}.${ext}`;
 			} while (
-				await con
-					.promise()
-					.execute(
-						"SELECT * FROM file WHERE LOWER(filename) = LOWER(?)",
-						[fullname]
-					)[0]
+				(
+					await con
+						.promise()
+						.execute(
+							"SELECT * FROM file WHERE LOWER(filename) = LOWER(?)",
+							[fullname]
+						)
+				)[0].length > 0
 			);
 			con.promise().execute(
 				"INSERT INTO file (filename, title, hash, userID) VALUES (?,?,?,?)",
 				[fullname, file.name, file.md5, req.user.userID]
 			);
 
-			const path = `../uploads/files/${fullname}`;
-			await file.mv(path);
+			await file.mv(`../uploads/files/${fullname}`);
 
 			createThumbnail(180, fullname);
 
@@ -66,18 +68,24 @@ router.post("/", async (req, res) => {
 
 module.exports = router;
 
-function createThumbnail(size, fullname) {
+function createThumbnail(size, name) {
+	const filename = `../uploads/files/${name}`;
+	const thumbname = `../uploads/thumbnails/${name}`;
 	const { width, height } = JSON.parse(
 		execSync(
-			`ffprobe -v error -select_streams v:0 -show_entries stream=height,width -of json ../uploads/files/${fullname}`
+			`ffprobe -v error -select_streams v:0 -show_entries stream=height,width -of json ${filename}`
 		)
-	).streams;
+	).streams[0];
 
-	const sizeStr = width > height ? `${size}x?` : `?x${size}`;
+	const ratio = width / height;
+	const sizeString =
+		ratio > 1
+			? size + "x" + Math.round(size / ratio)
+			: Math.round(size * ratio) + "x" + size;
 
-	require("simple-thumbnail")(
-		`../uploads/files/${fullname}`,
-		`../uploads/thumbnails/${fullname}`,
-		sizeStr
+	execSync(
+		`ffmpeg -v error -i ${filename} -vframes 1 -an -s ${sizeString} ${thumbname}.png`
 	);
+
+	fs.renameSync(`${thumbname}.png`, thumbname);
 }
