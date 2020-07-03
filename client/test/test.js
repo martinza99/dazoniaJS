@@ -1,17 +1,44 @@
 const output = document.getElementById("output");
 const fieldset = document.getElementsByTagName("fieldset")[0];
 
-let endpoint = endpoints.list;
+fetch("/api/files").then((res) =>
+	res.json().then((files) => {
+		const fileList = document.getElementById("files");
+		for (const file of files) {
+			const option = document.createElement("option");
+			option.value = file.filename;
+			fileList.appendChild(option);
+		}
+	})
+);
+fetch("/api/users").then((res) =>
+	res.json().then((users) => {
+		const userList = document.getElementById("users");
+		for (const user of users) {
+			const option = document.createElement("option");
+			option.value = user.username;
+			userList.appendChild(option);
+		}
+	})
+);
+
+let endpoint;
 
 const form = document.forms[0];
 form.addEventListener("submit", async (event) => {
 	const options = Object.assign({}, endpoint.options);
 	if (!options.headers)
 		options.headers = { "Content-Type": "application/json" };
-	let url = endpoint.url;
+	let url = new URL(location.origin + endpoint.url);
+	// url.searchParams.
 	const formData = new FormData(form);
+	if (endpoint.options.method == "GET")
+		for (const [key, value] of formData.entries()) {
+			url.searchParams.append(key, value);
+		}
 
-	if (formData.has("id")) url = url.replace(":id", formData.get("id"));
+	if (formData.has("id"))
+		url.href = url.href.replace(":id", formData.get("id"));
 	formData.delete("id");
 
 	if (options.body) {
@@ -24,17 +51,19 @@ form.addEventListener("submit", async (event) => {
 		}
 	}
 	const res = await fetch(url, options);
-	if (res.type != "error") {
-		console.log(await res.json());
-	}
+	// if (res.type != "error") {
+	// 	console.log(await res.json());
+	// }
 
-	// output.textContent += (await res.text()) + "\n";
+	if (res.ok && res.status != 204) console.log(await res.json());
 });
 
 const select = document.getElementsByTagName("select")[0];
-select.addEventListener("input", (event) => {
+select.addEventListener("input", selectCB);
+
+function selectCB(event) {
 	fieldset.innerHTML = "";
-	const value = event.target.selectedOptions[0].value;
+	const value = select.selectedOptions[0].value;
 	endpoint = endpoints[value];
 	if (!endpoint.inputs) return;
 	for (let input of endpoint.inputs) {
@@ -46,9 +75,12 @@ select.addEventListener("input", (event) => {
 		}
 		const element = document.createElement("input");
 		element.placeholder = input.name;
-		for (const [key, val] of Object.entries(input)) element[key] = val;
+		for (const [key, val] of Object.entries(input))
+			element.setAttribute(key, val);
 
 		fieldset.appendChild(element);
 		fieldset.appendChild(document.createElement("br"));
 	}
-});
+}
+
+selectCB();

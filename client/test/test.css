@@ -5,3 +5,12 @@ body {
 fieldset {
 	width: fit-content;
 }
+
+code {
+	background-color: darkslategray;
+	color: black;
+}
+
+option:disabled {
+	color: red;
+}

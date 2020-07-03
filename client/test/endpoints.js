@@ -1,27 +1,33 @@
 const endpoints = {
+	filesClear: {
+		url: "/api/files/clear",
+		options: {
+			method: "DELETE",
+		},
+	},
 	filesList: {
-		inputs: [],
+		inputs: ["tags"],
 		url: "/api/files",
 		options: {
 			method: "GET",
 		},
 	},
 	files: {
-		inputs: ["id"],
+		inputs: [{ name: "id", list: "files" }],
 		url: "/api/files/:id",
 		options: {
 			method: "GET",
 		},
 	},
 	filesDelete: {
-		inputs: ["id"],
+		inputs: [{ name: "id", list: "files" }],
 		url: "/api/files/:id",
 		options: {
 			method: "DELETE",
 		},
 	},
 	filesTitle: {
-		inputs: ["id", "title"],
+		inputs: [{ name: "id", list: "files" }, "title"],
 		url: "/api/files/:id/title",
 		options: {
 			method: "PATCH",
@@ -30,22 +36,37 @@ const endpoints = {
 	},
 	filesUpload: {
 		inputs: [{ name: "file", type: "file", multiple: true }],
-		url: "/api/files/",
+		url: "/api/files",
 		options: {
 			method: "POST",
 			headers: {},
 			body: true,
 		},
 	},
+	filesReplace: {
+		inputs: [
+			{ name: "id", list: "files" },
+			{ name: "file", type: "file" },
+		],
+		url: "/api/files/:id",
+		options: {
+			method: "PATCH",
+			headers: {},
+			body: true,
+		},
+	},
 	ratings: {
-		inputs: ["id"],
+		inputs: [{ name: "id", list: "files" }],
 		url: "/api/files/:id/ratings",
 		options: {
 			method: "GET",
 		},
 	},
 	ratingsPut: {
-		inputs: ["id", { name: "rating", type: "number" }],
+		inputs: [
+			{ name: "id", list: "files" },
+			{ name: "rating", type: "number" },
+		],
 		url: "/api/files/:id/ratings",
 		options: {
 			method: "PUT",
@@ -53,7 +74,7 @@ const endpoints = {
 		},
 	},
 	ratingsDelete: {
-		inputs: ["id"],
+		inputs: [{ name: "id", list: "files" }],
 		url: "/api/files/:id/ratings",
 		options: {
 			method: "DELETE",
@@ -66,7 +87,7 @@ const endpoints = {
 		},
 	},
 	usersGet: {
-		inputs: ["id"],
+		inputs: [{ name: "id", list: "users" }],
 		url: "/api/users/:id",
 		options: {
 			method: "GET",

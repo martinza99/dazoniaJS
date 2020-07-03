@@ -11,12 +11,13 @@
 <body>
 	<select>
 		<optgroup label="files">
-			<option value="filesList" selected>File list</option>
-			<option value="filesSearch" disabled>File Search</option>
+			<option value="filesClear" selected>Delete all Files</option>
+			<option value="filesList">File list</option>
 			<option value="files">File Data</option>
 			<option value="filesDelete">File Delete</option>
 			<option value="filesTitle">File Title</option>
 			<option value="filesUpload">File Upload</option>
+			<option value="filesReplace">File Replace</option>
 		</optgroup>
 		<optgroup label="rating">
 			<option value="ratings">Rating Get</option>
@@ -34,6 +35,7 @@
 		<optgroup label="auth">
 			<option value="authLogin">Login</option>
 			<option value="authLogout">Logout</option>
+			<option value="authChangePassword" disabled>Change Password</option>
 		</optgroup>
 	</select>
 
@@ -44,7 +46,10 @@
 		<input type="submit" />
 	</form>
 
-	<pre id="output"></pre>
+	<datalist id="files"></datalist>
+	<datalist id="users"></datalist>
+
+	<div id="output"></div>
 	<script src="endpoints.js"></script>
 	<script src="test.js"></script>
 </body>
