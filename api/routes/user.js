@@ -11,7 +11,7 @@ router.get("/@me", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
 	try {
-		const sql = `SELECT userID, username FROM file WHERE userID = ?`;
+		const sql = `SELECT userID, username FROM user WHERE userID = ?`;
 		const results = (await con.promise().query(sql, req.params.id))[0];
 		if (results.length > 0) res.json(results[0]);
 		else res.status(404).json({ status: 404, message: "User not found" });
