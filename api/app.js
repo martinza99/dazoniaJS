@@ -24,13 +24,15 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(fileUpload());
+app.use(fileUpload(config.uploadOptions));
 
+app.use("/types", express.static("../uploads/temp"));
+app.use("/files", express.static("../uploads/files"));
+app.use("/thumbnails", express.static("../uploads/thumbnails"));
 app.use("/files|/thumbnails", express.static("../../dazonia/thumbnails"));
 app.use("/api", authCheck, apiRouter);
 app.use("/auth", authRouter);
-app.use("/test", express.static("../client/test"));
-// app.use(express.static("../client/build"));
+app.use("/", express.static("../www/static"));
 
 app.use((req, res) => {
 	res.status(404).json({
@@ -53,8 +55,8 @@ app.listen(config.port, () => {
 async function authCheck(req, res, next) {
 	if (req.user) next();
 	else {
-		if (req.body.apiKey) {
-			req.user = await User.getByApiKey(req.body.apiKey);
+		if (req.headers.authorization) {
+			req.user = await User.getByApiKey(req.headers.authorization);
 			if (req.user) next();
 			else res.status(400).json({ message: "Invalid API key" });
 		} else res.sendStatus(401);

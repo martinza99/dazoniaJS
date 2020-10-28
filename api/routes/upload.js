@@ -5,6 +5,16 @@ const dazFile = require("../models/file");
 const fs = require("fs");
 const { execSync } = require("child_process");
 
+//TODO: DELETE THIS
+router.delete("/clear", async (req, res) => {
+	await con.promise().query("TRUNCATE file");
+	for (const file of fs.readdirSync("../uploads/files/")) {
+		fs.unlinkSync("../uploads/files/" + file);
+		fs.unlinkSync("../uploads/thumbnails/" + file);
+	}
+	res.json({ message: "deleted all files" });
+});
+
 router.post("/", async (req, res) => {
 	if (!req.files) {
 		res.status(400).json({ message: "No file uploaded" });
@@ -26,6 +36,7 @@ router.post("/", async (req, res) => {
 				.replace("/", "_");
 
 			const ext = file.name.split(".").pop();
+
 			let name = "";
 			let fullname;
 			do {
@@ -46,6 +57,7 @@ router.post("/", async (req, res) => {
 				"INSERT INTO file (filename, title, hash, userID) VALUES (?,?,?,?)",
 				[fullname, file.name, file.md5, req.user.userID]
 			);
+			//add reserved windows filenames
 
 			await file.mv(`../uploads/files/${fullname}`);
 
